@@ -22,7 +22,7 @@ public class Review extends Timestamped {
 
     private String content;
 
-    @OneToMany(mappedBy = "review", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "review", orphanRemoval = true)
     private Set<Image> images = new HashSet<>();
 
     private Long givenPoint;

@@ -13,6 +13,7 @@ public enum ErrorCode {
     PLACE_NOT_FOUND(BAD_REQUEST, "요청한 이미지를 찾을 수 없습니다"),
     USER_NOT_FOUND(BAD_REQUEST, "요청한 사용자가 존재하지 않습니다"),
     REVIEW_NOT_FOUND(BAD_REQUEST, "요청한 리뷰가 존재하지 않습니다"),
+    ELEMENT_NOT_MATCH(BAD_REQUEST, "요청값이 일치하지 않습니다"),
     USER_NOT_MATCH(BAD_REQUEST, "요청한 사용자와 작성자가 일치하지 않습니다"),
     PLACE_NOT_MATCH(BAD_REQUEST, "요청한 장소와 작성 장소가 일치하지 않습니다"),
     INVALID_INPUT(BAD_REQUEST, "잘못된 입력값입니다"),

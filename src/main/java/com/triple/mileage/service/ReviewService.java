@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -55,11 +56,10 @@ public class ReviewService {
     @Transactional
     public void mod(UUID reviewId, String content, Set<UUID> attachedPhotoIds, UUID userId, UUID placeId) {
         Review review = getReview(reviewId);
-        Place place = getPlace(placeId);
-        User user = getUser(userId);
+        Place place = review.getPlace();
+        User user = review.getUser();
 
-        if (!review.getUser().equals(user)) throw new UserNotMatchException();
-        if (!review.getPlace().equals(place)) throw new PlaceNotMatchException();
+        matchValidation(userId, placeId, user, place);
 
         Long changePoint = pointPolicy.calculate(content, attachedPhotoIds.size(), place, user);
         review.change(content, attachedPhotoIds, changePoint);
@@ -70,12 +70,17 @@ public class ReviewService {
     @Transactional
     public void delete(UUID reviewId, UUID userId, UUID placeId) {
         Review review = getReview(reviewId);
-        User user = getUser(userId);
+        User user = review.getUser();
+        matchValidation(userId, placeId, user, review.getPlace());
+        Long givenPoint = review.getGivenPoint();
+        if (givenPoint != 0) user.changePoint(-givenPoint);
+        imageRepository.deleteAllBy(reviewId);
+        reviewRepository.deleteAllInBatch(Collections.singletonList(review));
+    }
 
-        if (!review.getUser().equals(user)) throw new UserNotMatchException();
-        if (!review.getPlace().getPlaceId().equals(placeId)) throw new PlaceNotMatchException();
-        user.changePoint(-review.getGivenPoint());
-        reviewRepository.delete(review);
+    private void matchValidation(UUID userId, UUID placeId, User user, Place place) {
+        if (!user.getUserId().equals(userId)) throw new UserNotMatchException();
+        if (!place.getPlaceId().equals(placeId)) throw new PlaceNotMatchException();
     }
 
     private Review getReview(UUID reviewId) {
