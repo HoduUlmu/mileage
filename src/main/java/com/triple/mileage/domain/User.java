@@ -32,7 +32,7 @@ public class User {
         this.point = 0L;
     }
 
-    public void addReviewPoint(Long point) {
+    public void changePoint(Long point) {
         this.point += point;
     }
 }
