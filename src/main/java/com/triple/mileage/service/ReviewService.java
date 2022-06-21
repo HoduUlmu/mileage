@@ -33,7 +33,7 @@ public class ReviewService {
         User user = getUser(userId);
         Place place = getPlace(placeId);
 
-        Long addPoint = pointPolicy.calculate(content, attachedPhotoIds.size(), place);
+        Long addPoint = pointPolicy.calculate(content, attachedPhotoIds.size(), place, user);
 
         Review review = Review.builder()
                 .reviewId(reviewId)
@@ -61,10 +61,21 @@ public class ReviewService {
         if (!review.getUser().equals(user)) throw new UserNotMatchException();
         if (!review.getPlace().equals(place)) throw new PlaceNotMatchException();
 
-        Long changePoint = pointPolicy.calculate(content, attachedPhotoIds.size(), place);
+        Long changePoint = pointPolicy.calculate(content, attachedPhotoIds.size(), place, user);
         review.change(content, attachedPhotoIds, changePoint);
         long newPoint = changePoint - review.getGivenPoint();
         if (newPoint != 0) user.changePoint(newPoint);
+    }
+
+    @Transactional
+    public void delete(UUID reviewId, UUID userId, UUID placeId) {
+        Review review = getReview(reviewId);
+        User user = getUser(userId);
+
+        if (!review.getUser().equals(user)) throw new UserNotMatchException();
+        if (!review.getPlace().getPlaceId().equals(placeId)) throw new PlaceNotMatchException();
+        user.changePoint(-review.getGivenPoint());
+        reviewRepository.delete(review);
     }
 
     private Review getReview(UUID reviewId) {

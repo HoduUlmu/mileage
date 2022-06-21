@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Review {
+public class Review extends Timestamped {
 
     @Id
     @Column(name = "review_id", columnDefinition = "BINARY(16)")

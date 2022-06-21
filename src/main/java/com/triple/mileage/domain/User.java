@@ -15,7 +15,7 @@ import java.util.UUID;
 @Getter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends Timestamped {
 
     @Id
     @Column(name = "user_id", columnDefinition = "BINARY(16)")

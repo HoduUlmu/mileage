@@ -5,14 +5,18 @@ DROP TABLE IF EXISTS users;
 
 CREATE TABLE users
 (
-    user_id BINARY(16) NOT NULL PRIMARY KEY,
-    email   VARCHAR(255) NOT NULL,
-    point   BIGINT
+    user_id     BINARY(16) NOT NULL PRIMARY KEY,
+    email       VARCHAR(255) NOT NULL,
+    point       BIGINT,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE place
 (
-    place_id BINARY(16) NOT NULL PRIMARY KEY
+    place_id    BINARY(16) NOT NULL PRIMARY KEY,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE review
@@ -22,13 +26,17 @@ CREATE TABLE review
     given_point BIGINT NOT NULL,
     place_id    BINARY(16) NOT NULL,
     user_id     BINARY(16) NOT NULL,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (place_id) REFERENCES place (place_id),
     FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
 CREATE TABLE image
 (
-    image_id  BINARY(16) NOT NULL PRIMARY KEY,
-    review_id BINARY(16) NOT NULL,
+    image_id    BINARY(16) NOT NULL PRIMARY KEY,
+    review_id   BINARY(16) NOT NULL,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (review_id) REFERENCES review (review_id)
 );

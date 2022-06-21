@@ -12,7 +12,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Place {
+public class Place extends Timestamped {
     @Id
     @Column(name = "place_id", columnDefinition = "BINARY(16)")
     private UUID placeId;

@@ -30,7 +30,8 @@ public class EventController {
                         requestDto.getUserId(),
                         requestDto.getPlaceId());
             }
-            else if (action == MOD)
+            else if (action == MOD) {
+                requestDto.nullCheck();
                 reviewService.mod(
                         requestDto.getReviewId(),
                         requestDto.getContent(),
@@ -38,6 +39,13 @@ public class EventController {
                         requestDto.getUserId(),
                         requestDto.getPlaceId()
                 );
+            } else if (action == DELETE) {
+                reviewService.delete(
+                        requestDto.getReviewId(),
+                        requestDto.getUserId(),
+                        requestDto.getPlaceId()
+                );
+            }
         }
     }
 }

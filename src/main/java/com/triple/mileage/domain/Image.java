@@ -11,7 +11,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Image {
+public class Image extends Timestamped {
     @Id
     @Column(name = "image_id", columnDefinition = "BINARY(16)")
     private UUID imageId;
