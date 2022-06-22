@@ -15,5 +15,5 @@ import java.util.UUID;
 public class Place extends Timestamped {
     @Id
     @Column(name = "place_id", columnDefinition = "BINARY(16)")
-    private UUID placeId;
+    private UUID id;
 }

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,7 +30,7 @@ public class ReviewService {
     private final TextImageFirstReviewPointPolicy pointPolicy;
 
     @Transactional
-    public void add(UUID reviewId, String content, Set<UUID> attachedPhotoIds, UUID userId, UUID placeId) {
+    public void add(UUID reviewId, String content, List<UUID> attachedPhotoIds, UUID userId, UUID placeId) {
         User user = getUser(userId);
         Place place = getPlace(placeId);
 
@@ -45,24 +45,36 @@ public class ReviewService {
                 .build();
         reviewRepository.save(review);
 
-        Set<Image> images = attachedPhotoIds.stream()
+        List<Image> images = attachedPhotoIds.stream()
                 .map((imageId) -> new Image(imageId, review))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
         imageRepository.saveAll(images);
 
         if (addPoint > 0) user.changePoint(addPoint);
     }
 
     @Transactional
-    public void mod(UUID reviewId, String content, Set<UUID> attachedPhotoIds, UUID userId, UUID placeId) {
+    public void mod(UUID reviewId, String content, List<UUID> attachedPhotoIds, UUID userId, UUID placeId) {
         Review review = getReview(reviewId);
         Place place = review.getPlace();
         User user = review.getUser();
 
         matchValidation(userId, placeId, user, place);
-
         Long changePoint = pointPolicy.calculate(content, attachedPhotoIds.size(), place, user);
-        review.change(content, attachedPhotoIds, changePoint);
+
+        List<Image> oldImages = imageRepository.findAllByReview(review);
+        List<Image> removeImages = oldImages.stream()
+                .filter(image -> !attachedPhotoIds.contains(image.getId()))
+                .collect(Collectors.toList());
+        List<Image> newImages = attachedPhotoIds.stream()
+                .filter(imageId -> oldImages.stream().noneMatch(image -> image.getId() == imageId))
+                .map(imageId -> new Image(imageId, review))
+                .collect(Collectors.toList());
+        imageRepository.saveAll(newImages);
+        imageRepository.deleteAllInBatch(removeImages);
+
+
+        review.change(content,  changePoint);
         long newPoint = changePoint - review.getGivenPoint();
         if (newPoint != 0) user.changePoint(newPoint);
     }
@@ -79,8 +91,9 @@ public class ReviewService {
     }
 
     private void matchValidation(UUID userId, UUID placeId, User user, Place place) {
-        if (!user.getUserId().equals(userId)) throw new UserNotMatchException();
-        if (!place.getPlaceId().equals(placeId)) throw new PlaceNotMatchException();
+        assert user.getId() != null && place.getId() != null;
+        if (!user.getId().equals(userId)) throw new UserNotMatchException();
+        if (!place.getId().equals(placeId)) throw new PlaceNotMatchException();
     }
 
     private Review getReview(UUID reviewId) {

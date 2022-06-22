@@ -14,14 +14,14 @@ import java.util.UUID;
 public class Image extends Timestamped {
     @Id
     @Column(name = "image_id", columnDefinition = "BINARY(16)")
-    private UUID imageId;
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
     private Review review;
 
     public Image(UUID imageId, Review review) {
-        this.imageId = imageId;
+        this.id = imageId;
         this.review = review;
     }
 
@@ -30,11 +30,11 @@ public class Image extends Timestamped {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Image image = (Image) o;
-        return imageId.equals(image.imageId);
+        return id.equals(image.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(imageId);
+        return Objects.hash(id);
     }
 }

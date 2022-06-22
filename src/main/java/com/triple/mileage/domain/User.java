@@ -1,9 +1,6 @@
 package com.triple.mileage.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,15 +16,15 @@ public class User extends Timestamped {
 
     @Id
     @Column(name = "user_id", columnDefinition = "BINARY(16)")
-    private UUID userId;
+    private UUID id;
 
     private String email;
 
     private Long point;
 
     @Builder
-    public User(UUID userId, String email) {
-        this.userId = userId;
+    public User(@NonNull UUID userId, @NonNull String email) {
+        this.id = userId;
         this.email = email;
         this.point = 0L;
     }

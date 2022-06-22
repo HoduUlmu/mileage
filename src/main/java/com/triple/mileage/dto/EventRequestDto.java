@@ -4,8 +4,8 @@ import com.triple.mileage.web.constant.ActionEnum;
 import com.triple.mileage.web.constant.TypeEnum;
 import lombok.Getter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -14,7 +14,7 @@ public class EventRequestDto {
     private ActionEnum action;
     private UUID reviewId;
     private String content;
-    private Set<UUID> attachedPhotoIds;
+    private List<UUID> attachedPhotoIds;
     private UUID userId;
     private UUID placeId;
 
@@ -23,7 +23,7 @@ public class EventRequestDto {
             this.content = "";
         }
         if (attachedPhotoIds == null) {
-            this.attachedPhotoIds = new HashSet<>();
+            this.attachedPhotoIds = new ArrayList<>();
         }
     }
 }

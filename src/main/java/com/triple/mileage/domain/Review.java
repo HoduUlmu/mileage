@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -18,12 +15,9 @@ public class Review extends Timestamped {
 
     @Id
     @Column(name = "review_id", columnDefinition = "BINARY(16)")
-    private UUID reviewId;
+    private UUID id;
 
     private String content;
-
-    @OneToMany(mappedBy = "review", orphanRemoval = true)
-    private Set<Image> images = new HashSet<>();
 
     private Long givenPoint;
 
@@ -37,20 +31,15 @@ public class Review extends Timestamped {
 
     @Builder
     public Review(UUID reviewId, String content, Long givenPoint, Place place, User user) {
-        this.reviewId = reviewId;
+        this.id = reviewId;
         this.content = content;
         this.givenPoint = givenPoint;
         this.place = place;
         this.user = user;
     }
 
-    public void change(String content, Set<UUID> attachedPhotoIds, Long changePoint) {
+    public void change(String content, Long changePoint) {
         this.content = content;
-        this.images.removeIf((image) -> !attachedPhotoIds.contains(image.getImageId()));
-        Set<Image> addImages = attachedPhotoIds.stream()
-                .map((imageId) -> new Image(imageId, this))
-                .collect(Collectors.toSet());
-        this.images.addAll(addImages);
         this.givenPoint = changePoint;
     }
 }

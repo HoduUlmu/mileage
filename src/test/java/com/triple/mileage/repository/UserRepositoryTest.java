@@ -39,11 +39,11 @@ class UserRepositoryTest {
         User savedUser = userRepository.save(user);
         em.flush();
         em.clear();
-        User findUser = userRepository.findById(savedUser.getUserId()).orElseThrow();
+        User findUser = userRepository.findById(savedUser.getId()).orElseThrow();
 
         // then
-        UUID savedUserId = savedUser.getUserId();
-        UUID findUserId = findUser.getUserId();
+        UUID savedUserId = savedUser.getId();
+        UUID findUserId = findUser.getId();
         log.info("savedUserId={}, findUserId={}", savedUserId, findUserId);
         assertThat(savedUserId).isEqualTo(findUserId);
     }
