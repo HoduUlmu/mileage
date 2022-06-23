@@ -7,7 +7,7 @@ CREATE TABLE users
 (
     user_id     BINARY(16) NOT NULL PRIMARY KEY,
     email       VARCHAR(255) NOT NULL,
-    point       BIGINT,
+    points       BIGINT,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

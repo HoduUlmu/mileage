@@ -20,16 +20,16 @@ public class User extends Timestamped {
 
     private String email;
 
-    private Long point;
+    private Long points;
 
     @Builder
     public User(@NonNull UUID userId, @NonNull String email) {
         this.id = userId;
         this.email = email;
-        this.point = 0L;
+        this.points = 0L;
     }
 
     public void changePoint(Long point) {
-        this.point += point;
+        this.points += point;
     }
 }

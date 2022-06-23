@@ -18,6 +18,6 @@ public class PointService {
     @Transactional(readOnly = true)
     public Long getUserPoint(UUID userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        return user.getPoint();
+        return user.getPoints();
     }
 }

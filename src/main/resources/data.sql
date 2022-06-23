@@ -1,4 +1,4 @@
-INSERT INTO users(user_id, email, point)
+INSERT INTO users(user_id, email, points)
 values (UUID_TO_BIN('3f06af63-a93c-11e4-9797-00505690773f'), 'kim@naver.com', 0);
 
 INSERT INTO place(place_id)

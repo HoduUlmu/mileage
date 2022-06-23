@@ -67,9 +67,13 @@ public class ReviewService {
                 .filter(image -> !attachedPhotoIds.contains(image.getId()))
                 .collect(Collectors.toList());
         List<Image> newImages = attachedPhotoIds.stream()
-                .filter(imageId -> oldImages.stream().noneMatch(image -> image.getId() == imageId))
+                .filter(imageId -> oldImages.stream().noneMatch(image -> {
+                    assert image.getId() != null;
+                    return image.getId().equals(imageId);
+                }))
                 .map(imageId -> new Image(imageId, review))
                 .collect(Collectors.toList());
+
         imageRepository.saveAll(newImages);
         imageRepository.deleteAllInBatch(removeImages);
 
