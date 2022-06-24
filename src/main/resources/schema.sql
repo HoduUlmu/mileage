@@ -29,6 +29,7 @@ CREATE TABLE review
     user_id     BINARY(16) NOT NULL,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_first BOOLEAN,
     FOREIGN KEY (place_id) REFERENCES place (place_id),
     FOREIGN KEY (user_id) REFERENCES users (user_id),
     INDEX p_idx (place_id)

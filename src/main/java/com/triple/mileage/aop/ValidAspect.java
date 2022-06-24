@@ -17,7 +17,6 @@ public class ValidAspect {
 
     @Around(value = "reviewEvents()")
     public Object doValidate(ProceedingJoinPoint joinPoint) throws Throwable {
-        System.out.println("valid");
         Object[] args = joinPoint.getArgs();
         for (Object arg : args) {
             if (arg instanceof BindingResult) {

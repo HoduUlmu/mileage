@@ -34,7 +34,8 @@ public class ReviewService {
     public void add(UUID reviewId, String content, List<UUID> attachedPhotoIds, UUID userId, UUID placeId) {
         User user = getUser(userId);
         Place place = getPlace(placeId);
-        Long addPoint = pointPolicy.calculate(content, attachedPhotoIds.size(), place, user);
+        boolean isFirst = pointPolicy.isFirstCheckAdd(place);
+        Long addPoint = pointPolicy.calculate(content, attachedPhotoIds.size(), isFirst);
 
         Review review = Review.builder()
                 .reviewId(reviewId)
@@ -42,6 +43,7 @@ public class ReviewService {
                 .givenPoint(addPoint)
                 .user(user)
                 .place(place)
+                .isFirst(isFirst)
                 .build();
 
         reviewRepository.save(review);
@@ -56,7 +58,9 @@ public class ReviewService {
         User user = review.getUser();
 
         matchValidation(userId, placeId, user, place);
-        Long changePoint = pointPolicy.calculate(content, attachedPhotoIds.size(), place, user);
+        boolean isFirst = pointPolicy.isFirstCheckMod(review);
+        System.out.println("isFirst = " + isFirst);
+        Long changePoint = pointPolicy.calculate(content, attachedPhotoIds.size(), isFirst);
 
         imageService.changeAll(attachedPhotoIds, review);
         pointService.changeUserPoint(user, reviewId, changePoint - review.getGivenPoint(), REVIEW, MOD);

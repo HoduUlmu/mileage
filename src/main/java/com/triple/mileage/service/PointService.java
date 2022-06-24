@@ -1,12 +1,14 @@
 package com.triple.mileage.service;
 
+import com.triple.mileage.constant.ActionEnum;
+import com.triple.mileage.constant.TypeEnum;
+import com.triple.mileage.domain.Place;
 import com.triple.mileage.domain.PointHistory;
 import com.triple.mileage.domain.User;
 import com.triple.mileage.exception.custom.business.UserNotFoundException;
 import com.triple.mileage.repository.PointHistoryRepository;
 import com.triple.mileage.repository.UserRepository;
-import com.triple.mileage.constant.ActionEnum;
-import com.triple.mileage.constant.TypeEnum;
+import com.triple.mileage.service.policy.TextImageFirstReviewPointPolicy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ public class PointService {
 
     private final UserRepository userRepository;
     private final PointHistoryRepository historyRepository;
+    private final TextImageFirstReviewPointPolicy pointPolicy;
 
     @Transactional(readOnly = true)
     public Long getUserPoint(UUID userId) {

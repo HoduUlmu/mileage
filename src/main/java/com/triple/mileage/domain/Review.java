@@ -21,6 +21,8 @@ public class Review extends Timestamped {
 
     private Long givenPoint;
 
+    private boolean isFirst;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id")
     private Place place;
@@ -30,12 +32,13 @@ public class Review extends Timestamped {
     private User user;
 
     @Builder
-    public Review(UUID reviewId, String content, Long givenPoint, Place place, User user) {
+    public Review(UUID reviewId, String content, Long givenPoint, Place place, User user, boolean isFirst) {
         this.id = reviewId;
         this.content = content;
         this.givenPoint = givenPoint;
         this.place = place;
         this.user = user;
+        this.isFirst = isFirst;
     }
 
     public void change(String content, Long changePoint) {
