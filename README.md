@@ -2,6 +2,18 @@
 
 ## 서버 구동 시 2명의 유저와 2 곳의 장소 추가
 
+USER UUID : 
+
+'3f06af63-a93c-11e4-9797-00505690773f', 
+
+'2be2042f-5df1-4173-80ec-21c324e18779'
+
+PLACE UUID : 
+
+'ef105b41-1baf-4ac3-b459-adb47b2b5806',
+
+'62422ed1-17e1-493d-ad7c-e7351231d7e5'
+
 ## MYSQL DB NAME : mileage
 
 부득이하게 로컬 DB로 진행했습니다. 양해바랍니다.
@@ -117,11 +129,25 @@ filter를 통해 type 파악 -> 어노테이션 기반 핸들러 매핑 ->  Even
 의견: 
 
 1. UUID가 PK일 경우 순차적인 UUID가 아니라면 Mysql에 insert 시 성능이 좋지 않고 또한 api를 통해 전달되는 값은 pk가 아닌 것이 좋습니다. 
-2. UUID를 유니크 키로 Auto_Increment를 PK로 설정할까 했지만 api의 동작이 모두 UUID 기반으로 이루어지기 때문에 DB에서 쿼리가 추가로 나가게 된다는 단점이 있어 UUID를 PK로 선정
+2. UUID를 유니크 키로 Auto_Increment를 PK로 설정할 시 api의 동작이 UUID 기반이라 DB에서 쿼리가 추가로 나가게 된다는 단점
 
 
 
 선택:
 
-UUID를 유니크 키로 Auto_Increment를 PK로 설정할까 했지만 이럴 경우 api의 동작이 모두 UUID 기반으로 이루어지기 때문에 DB에서 쿼리가 추가로 나가게 된다는 단점이 있어 UUID를 PK로 선정했습니다.
+UUID를 PK로 선정했습니다.
 
+
+
+- TYPE 및 ACTION 처리
+
+문제 상황 : URL 하나를 통해 들어오는 요청이 다양해 Controller 단에서 url로 구분하여 매핑할 수 없음
+
+해결 과정 : 
+
+1. IF문으로 처리할 시 TYPE과 ACTION의 개수가 늘어나면 처리 속도가 느려질 수 있음
+2. ACTION의 경우 Spring이 핸들러 매핑을 수행하는 것을 본따 미리 map에 action에 대한 메소드를 넣어두고 요청이 올 때 꺼내 호출, 동적 메소드 호출에 따른 추가 오류 부담해야함
+3. Filter 단에서 Type 파악, Controller 단에서 Type 파악 -> filter 단에서 파악
+   - Controller 단에서 파악할 경우 후 처리가 복잡해짐 더해서 validation 과정 역시 복잡해짐
+   - 어노테이션 기반으로 핸들러 매핑을 새로 정의한 후 Filter에서 Type을 파악하면 이후 처리가 깔끔함
+   - 단 두 동작 모두 request body를 두번 읽는다는 단점이 있음
