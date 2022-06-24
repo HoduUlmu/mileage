@@ -12,11 +12,12 @@ import org.springframework.validation.BindingResult;
 @Component
 public class ValidAspect {
 
-    @Pointcut("execution(* com.triple.mileage.controller.EventController.events(..))")
-    private void events() {}
+    @Pointcut("execution(* com.triple.mileage.controller.EventController.reviewEvents(..))")
+    private void reviewEvents() {}
 
-    @Around(value = "events()")
+    @Around(value = "reviewEvents()")
     public Object doValidate(ProceedingJoinPoint joinPoint) throws Throwable {
+        System.out.println("valid");
         Object[] args = joinPoint.getArgs();
         for (Object arg : args) {
             if (arg instanceof BindingResult) {

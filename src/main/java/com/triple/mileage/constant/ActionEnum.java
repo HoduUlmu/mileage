@@ -1,4 +1,4 @@
-package com.triple.mileage.web.constant;
+package com.triple.mileage.constant;
 
 public enum ActionEnum {
     ADD("add"),

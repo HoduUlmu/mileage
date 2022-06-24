@@ -16,8 +16,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static com.triple.mileage.web.constant.ActionEnum.*;
-import static com.triple.mileage.web.constant.TypeEnum.REVIEW;
+import static com.triple.mileage.constant.ActionEnum.*;
+import static com.triple.mileage.constant.TypeEnum.REVIEW;
 
 @Service
 @RequiredArgsConstructor

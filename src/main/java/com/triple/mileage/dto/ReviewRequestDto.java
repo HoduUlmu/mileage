@@ -1,29 +1,31 @@
 package com.triple.mileage.dto;
 
-import lombok.Builder;
+import com.triple.mileage.constant.ActionEnum;
 import lombok.Getter;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Getter
 public class ReviewRequestDto {
-    private final UUID reviewId;
+
+    @NotNull(message = "액션이 필요합니다")
+    private ActionEnum action;
+
+    @NotNull(message = "리뷰 ID가 필요합니다")
+    private UUID reviewId;
+
     private String content;
+
     private List<UUID> attachedPhotoIds;
-    private final UUID userId;
-    private final UUID placeId;
 
+    @NotNull(message = "유저 ID가 필요합니다")
+    private UUID userId;
 
-    @Builder
-    public ReviewRequestDto(UUID reviewId, String content, List<UUID> attachedPhotoIds, UUID userId, UUID placeId) {
-        this.reviewId = reviewId;
-        this.content = content;
-        this.attachedPhotoIds = attachedPhotoIds;
-        this.userId = userId;
-        this.placeId = placeId;
-    }
+    @NotNull(message = "장소 ID가 필요합니다")
+    private UUID placeId;
 
     public void nullCheck() {
         if (this.content == null) {

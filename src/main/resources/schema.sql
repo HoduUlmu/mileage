@@ -52,6 +52,5 @@ CREATE TABLE point_history
     event_type VARCHAR(20) NOT NULL,
     event_action VARCHAR(10),
     point_change BIGINT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (user_id),
-    INDEX e_idx (event_id)
+    FOREIGN KEY (user_id) REFERENCES users (user_id)
 );

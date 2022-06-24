@@ -1,7 +1,7 @@
 package com.triple.mileage.domain;
 
-import com.triple.mileage.web.constant.ActionEnum;
-import com.triple.mileage.web.constant.TypeEnum;
+import com.triple.mileage.constant.ActionEnum;
+import com.triple.mileage.constant.TypeEnum;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
