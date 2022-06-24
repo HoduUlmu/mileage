@@ -1,12 +1,14 @@
-package com.triple.mileage.controller;
+package com.triple.mileage.controller.mapper;
 
 
 import com.triple.mileage.dto.ReviewRequestDto;
+import com.triple.mileage.exception.custom.business.InternalServerException;
 import com.triple.mileage.web.constant.ActionEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.validation.Valid;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,14 +38,12 @@ public class ReviewActionMapper implements ActionMapper<ReviewRequestDto> {
     }
 
     @Override
-    public void action(ActionEnum action, ReviewRequestDto requestDto) {
+    public void action(ActionEnum action, @Valid ReviewRequestDto requestDto) {
         Method method = mapper.get(action);
         try {
             method.invoke(reviewEventMapper, requestDto);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new InternalServerException(e);
         }
     }
 

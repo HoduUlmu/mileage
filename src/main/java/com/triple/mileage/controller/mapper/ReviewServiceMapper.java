@@ -1,4 +1,4 @@
-package com.triple.mileage.controller;
+package com.triple.mileage.controller.mapper;
 
 import com.triple.mileage.dto.ReviewRequestDto;
 import com.triple.mileage.service.ReviewService;

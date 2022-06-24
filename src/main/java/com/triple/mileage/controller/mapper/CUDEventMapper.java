@@ -1,4 +1,4 @@
-package com.triple.mileage.controller;
+package com.triple.mileage.controller.mapper;
 
 public interface CUDEventMapper<T>  {
     void add(T requestDto);

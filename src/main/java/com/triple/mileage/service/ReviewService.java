@@ -1,11 +1,9 @@
 package com.triple.mileage.service;
 
-import com.triple.mileage.domain.Image;
 import com.triple.mileage.domain.Place;
 import com.triple.mileage.domain.Review;
 import com.triple.mileage.domain.User;
 import com.triple.mileage.exception.custom.business.*;
-import com.triple.mileage.repository.ImageRepository;
 import com.triple.mileage.repository.PlaceRepository;
 import com.triple.mileage.repository.ReviewRepository;
 import com.triple.mileage.repository.UserRepository;
@@ -17,15 +15,18 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
+import static com.triple.mileage.web.constant.ActionEnum.*;
+import static com.triple.mileage.web.constant.TypeEnum.REVIEW;
 
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
 
+    private final ImageService imageService;
+    private final PointService pointService;
     private final UserRepository userRepository;
     private final PlaceRepository placeRepository;
-    private final ImageRepository imageRepository;
     private final ReviewRepository reviewRepository;
     private final TextImageFirstReviewPointPolicy pointPolicy;
 
@@ -33,7 +34,6 @@ public class ReviewService {
     public void add(UUID reviewId, String content, List<UUID> attachedPhotoIds, UUID userId, UUID placeId) {
         User user = getUser(userId);
         Place place = getPlace(placeId);
-
         Long addPoint = pointPolicy.calculate(content, attachedPhotoIds.size(), place, user);
 
         Review review = Review.builder()
@@ -43,14 +43,10 @@ public class ReviewService {
                 .user(user)
                 .place(place)
                 .build();
+
         reviewRepository.save(review);
-
-        List<Image> images = attachedPhotoIds.stream()
-                .map((imageId) -> new Image(imageId, review))
-                .collect(Collectors.toList());
-        imageRepository.saveAll(images);
-
-        if (addPoint > 0) user.changePoint(addPoint);
+        imageService.saveAll(attachedPhotoIds, review);
+        pointService.changeUserPoint(user, reviewId, addPoint, REVIEW, ADD);
     }
 
     @Transactional
@@ -62,37 +58,23 @@ public class ReviewService {
         matchValidation(userId, placeId, user, place);
         Long changePoint = pointPolicy.calculate(content, attachedPhotoIds.size(), place, user);
 
-        List<Image> oldImages = imageRepository.findAllByReview(review);
-        List<Image> removeImages = oldImages.stream()
-                .filter(image -> !attachedPhotoIds.contains(image.getId()))
-                .collect(Collectors.toList());
-        List<Image> newImages = attachedPhotoIds.stream()
-                .filter(imageId -> oldImages.stream().noneMatch(image -> {
-                    assert image.getId() != null;
-                    return image.getId().equals(imageId);
-                }))
-                .map(imageId -> new Image(imageId, review))
-                .collect(Collectors.toList());
-
-        imageRepository.saveAll(newImages);
-        imageRepository.deleteAllInBatch(removeImages);
-
-
+        imageService.changeAll(attachedPhotoIds, review);
+        pointService.changeUserPoint(user, reviewId, changePoint - review.getGivenPoint(), REVIEW, MOD);
         review.change(content,  changePoint);
-        long newPoint = changePoint - review.getGivenPoint();
-        if (newPoint != 0) user.changePoint(newPoint);
     }
 
     @Transactional
     public void delete(UUID reviewId, UUID userId, UUID placeId) {
         Review review = getReview(reviewId);
         User user = review.getUser();
+
         matchValidation(userId, placeId, user, review.getPlace());
-        Long givenPoint = review.getGivenPoint();
-        if (givenPoint != 0) user.changePoint(-givenPoint);
-        imageRepository.deleteAllBy(reviewId);
+        pointService.changeUserPoint(user, reviewId, -review.getGivenPoint(), REVIEW, DELETE);
+
+        imageService.deleteAll(reviewId);
         reviewRepository.deleteAllInBatch(Collections.singletonList(review));
     }
+
 
     private void matchValidation(UUID userId, UUID placeId, User user, Place place) {
         assert user.getId() != null && place.getId() != null;
